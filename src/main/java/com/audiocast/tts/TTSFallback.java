@@ -32,24 +32,25 @@ public class TTSFallback {
     }
     
     private void speakWindows(String text) throws IOException {
-        String command = "powershell -Command \"Add-Type -AssemblyName System.Speech; " +
-                        "(New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('" + 
-                        escapeText(text) + "')\"";
-        Runtime.getRuntime().exec(command);
+        ProcessBuilder pb = new ProcessBuilder("powershell", "-Command", 
+            "Add-Type -AssemblyName System.Speech; " +
+            "(New-Object System.Speech.Synthesis.SpeechSynthesizer).Speak('" + 
+            escapeText(text) + "')");
+        pb.start();
     }
     
     private void speakMac(String text) throws IOException {
-        String[] command = {"say", escapeText(text)};
-        Runtime.getRuntime().exec(command);
+        ProcessBuilder pb = new ProcessBuilder("say", escapeText(text));
+        pb.start();
     }
     
     private void speakLinux(String text) throws IOException {
         try {
-            String[] command = {"espeak", escapeText(text)};
-            Runtime.getRuntime().exec(command);
+            ProcessBuilder pb = new ProcessBuilder("espeak", escapeText(text));
+            pb.start();
         } catch (IOException e) {
-            String[] command = {"festival", "--tts"};
-            Process process = Runtime.getRuntime().exec(command);
+            ProcessBuilder pb = new ProcessBuilder("festival", "--tts");
+            Process process = pb.start();
             process.getOutputStream().write(text.getBytes());
             process.getOutputStream().close();
         }
