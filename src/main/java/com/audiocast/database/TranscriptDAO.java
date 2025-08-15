@@ -38,14 +38,14 @@ public class TranscriptDAO {
             return getAllTranscripts();
         }
         
-        String sql = "SELECT t.* FROM FT_SEARCH_DATA(?, 0, 0) ft, transcripts t " +
-                    "WHERE ft.TABLE='TRANSCRIPTS' AND t.id = ft.KEYS[0] " +
-                    "ORDER BY ft.SCORE DESC";
+        String sql = "SELECT * FROM transcripts WHERE title LIKE ? OR content LIKE ? ORDER BY title";
         
         try (Connection conn = dbManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             
-            stmt.setString(1, query);
+            String searchPattern = "%" + query + "%";
+            stmt.setString(1, searchPattern);
+            stmt.setString(2, searchPattern);
             
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {

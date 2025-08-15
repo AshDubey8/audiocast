@@ -150,6 +150,8 @@ public class TranscriptPanel extends JPanel {
         contentArea.setBackground(MainWindow.getPanelColor());
         contentArea.setForeground(MainWindow.getTextColor());
         contentArea.setCaretColor(MainWindow.getAccentColor());
+        contentArea.setEnabled(true); // Force enable
+        contentArea.setEditable(true); // Force editable
         
         JScrollPane contentScrollPane = new JScrollPane(contentArea);
         contentScrollPane.setBorder(BorderFactory.createCompoundBorder(
@@ -299,9 +301,11 @@ public class TranscriptPanel extends JPanel {
     private void setEditingEnabled(boolean enabled) {
         titleField.setEnabled(enabled);
         contentArea.setEnabled(enabled);
+        contentArea.setEditable(enabled);
         saveButton.setEnabled(enabled);
         deleteButton.setEnabled(enabled && currentTranscript != null && currentTranscript.getId() != null);
         speakButton.setEnabled(enabled);
+        System.out.println("Set editing enabled: " + enabled + ", content area enabled: " + contentArea.isEnabled());
     }
     
     private class TranscriptSelectionListener implements ListSelectionListener {
@@ -311,9 +315,14 @@ public class TranscriptPanel extends JPanel {
                 Transcript selected = transcriptList.getSelectedValue();
                 if (selected != null) {
                     currentTranscript = selected;
+                    System.out.println("Selected transcript: " + selected.getTitle());
+                    System.out.println("Content: " + selected.getContent());
                     titleField.setText(selected.getTitle());
                     contentArea.setText(selected.getContent());
+                    contentArea.setEnabled(true);
+                    contentArea.setEditable(true);
                     setEditingEnabled(true);
+                    System.out.println("Content area enabled: " + contentArea.isEnabled());
                 }
             }
         }
