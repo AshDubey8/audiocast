@@ -31,6 +31,35 @@ public class TranscriptDAO {
         return transcripts;
     }
     
+    public List<Transcript> searchTranscripts(String query) {
+        List<Transcript> transcripts = new ArrayList<>();
+        
+        if (query == null || query.trim().isEmpty()) {
+            return getAllTranscripts();
+        }
+        
+        String sql = "SELECT t.* FROM FT_SEARCH_DATA(?, 0, 0) ft, transcripts t " +
+                    "WHERE ft.TABLE='TRANSCRIPTS' AND t.id = ft.KEYS[0] " +
+                    "ORDER BY ft.SCORE DESC";
+        
+        try (Connection conn = dbManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, query);
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    transcripts.add(mapResultSetToTranscript(rs));
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error searching transcripts: " + e.getMessage());
+            return getAllTranscripts();
+        }
+        
+        return transcripts;
+    }
+    
     public boolean saveTranscript(Transcript transcript) {
         if (transcript.getId() == null) {
             return insertTranscript(transcript);
