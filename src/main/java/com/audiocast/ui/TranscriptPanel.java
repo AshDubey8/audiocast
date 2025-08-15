@@ -1,6 +1,7 @@
 package com.audiocast.ui;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import java.awt.*;
@@ -37,19 +38,39 @@ public class TranscriptPanel extends JPanel {
     
     private void initializeUI() {
         setLayout(new BorderLayout());
+        setBackground(MainWindow.getBackgroundColor());
+        setBorder(new EmptyBorder(10, 10, 10, 10));
         
         // Left panel - transcript list
         JPanel leftPanel = new JPanel(new BorderLayout());
-        leftPanel.setPreferredSize(new Dimension(300, 0));
+        leftPanel.setPreferredSize(new Dimension(320, 0));
+        leftPanel.setBackground(MainWindow.getPanelColor());
+        leftPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(MainWindow.getBorderColor(), 1),
+            new EmptyBorder(15, 15, 15, 15)
+        ));
         
         // Search panel
-        JPanel searchPanel = new JPanel(new BorderLayout());
+        JPanel searchPanel = new JPanel(new BorderLayout(10, 0));
+        searchPanel.setBackground(MainWindow.getPanelColor());
+        
+        JLabel searchLabel = new JLabel("Search:");
+        searchLabel.setForeground(MainWindow.getTextColor());
+        searchLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        
         searchField = new JTextField();
         searchField.addActionListener(e -> performSearch());
-        JButton searchButton = new JButton("Search");
+        searchField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(MainWindow.getBorderColor(), 1),
+            new EmptyBorder(8, 10, 8, 10)
+        ));
+        searchField.setBackground(MainWindow.getPanelColor());
+        searchField.setForeground(MainWindow.getTextColor());
+        
+        JButton searchButton = createStyledButton("Search");
         searchButton.addActionListener(e -> performSearch());
         
-        searchPanel.add(new JLabel("Search: "), BorderLayout.WEST);
+        searchPanel.add(searchLabel, BorderLayout.WEST);
         searchPanel.add(searchField, BorderLayout.CENTER);
         searchPanel.add(searchButton, BorderLayout.EAST);
         
@@ -58,34 +79,103 @@ public class TranscriptPanel extends JPanel {
         transcriptList = new JList<>(listModel);
         transcriptList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         transcriptList.addListSelectionListener(new TranscriptSelectionListener());
+        transcriptList.setBackground(MainWindow.getPanelColor());
+        transcriptList.setForeground(MainWindow.getTextColor());
+        transcriptList.setBorder(new EmptyBorder(5, 10, 5, 10));
+        transcriptList.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 13));
+        
+        // Custom list cell renderer for better styling
+        transcriptList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                    boolean isSelected, boolean cellHasFocus) {
+                super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                
+                setBorder(new EmptyBorder(8, 10, 8, 10));
+                
+                if (isSelected) {
+                    setBackground(new Color(240, 240, 240));
+                    setForeground(MainWindow.getTextColor());
+                } else {
+                    setBackground(MainWindow.getPanelColor());
+                    setForeground(MainWindow.getTextColor());
+                }
+                
+                return this;
+            }
+        });
         
         JScrollPane listScrollPane = new JScrollPane(transcriptList);
+        listScrollPane.setBorder(BorderFactory.createLineBorder(MainWindow.getBorderColor(), 1));
+        listScrollPane.getViewport().setBackground(MainWindow.getPanelColor());
         
         leftPanel.add(searchPanel, BorderLayout.NORTH);
-        leftPanel.add(listScrollPane, BorderLayout.CENTER);
+        leftPanel.add(Box.createVerticalStrut(15), BorderLayout.CENTER);
+        leftPanel.add(listScrollPane, BorderLayout.SOUTH);
         
         // Right panel - transcript editor
         JPanel rightPanel = new JPanel(new BorderLayout());
+        rightPanel.setBackground(MainWindow.getPanelColor());
+        rightPanel.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(MainWindow.getBorderColor(), 1),
+            new EmptyBorder(15, 15, 15, 15)
+        ));
         
         // Title field
-        JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.add(new JLabel("Title: "), BorderLayout.WEST);
+        JPanel titlePanel = new JPanel(new BorderLayout(10, 0));
+        titlePanel.setBackground(MainWindow.getPanelColor());
+        
+        JLabel titleLabel = new JLabel("Title:");
+        titleLabel.setForeground(MainWindow.getTextColor());
+        titleLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 12));
+        
         titleField = new JTextField();
+        titleField.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(MainWindow.getBorderColor(), 1),
+            new EmptyBorder(8, 10, 8, 10)
+        ));
+        titleField.setBackground(MainWindow.getPanelColor());
+        titleField.setForeground(MainWindow.getTextColor());
+        titleField.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 13));
+        
+        titlePanel.add(titleLabel, BorderLayout.WEST);
         titlePanel.add(titleField, BorderLayout.CENTER);
         
         // Content area
         contentArea = new JTextArea();
         contentArea.setLineWrap(true);
         contentArea.setWrapStyleWord(true);
-        contentArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
+        contentArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
+        contentArea.setBorder(new EmptyBorder(10, 10, 10, 10));
+        contentArea.setBackground(MainWindow.getPanelColor());
+        contentArea.setForeground(MainWindow.getTextColor());
+        contentArea.setCaretColor(MainWindow.getAccentColor());
+        
         JScrollPane contentScrollPane = new JScrollPane(contentArea);
+        contentScrollPane.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createTitledBorder(
+                BorderFactory.createLineBorder(MainWindow.getBorderColor(), 1),
+                "Content",
+                0, 0,
+                new Font(Font.SANS_SERIF, Font.BOLD, 12),
+                MainWindow.getTextColor()
+            ),
+            new EmptyBorder(5, 5, 5, 5)
+        ));
+        contentScrollPane.getViewport().setBackground(MainWindow.getPanelColor());
         
         // Button panel
-        JPanel buttonPanel = new JPanel(new FlowLayout());
-        saveButton = new JButton("Save");
-        deleteButton = new JButton("Delete");
-        speakButton = new JButton("Speak");
-        JButton newButton = new JButton("New");
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
+        buttonPanel.setBackground(MainWindow.getPanelColor());
+        
+        JButton newButton = createStyledButton("New");
+        saveButton = createStyledButton("Save");
+        deleteButton = createStyledButton("Delete");
+        speakButton = createStyledButton("Speak");
+        
+        // Style delete button differently
+        deleteButton.setBackground(new Color(245, 245, 245));
+        deleteButton.setForeground(new Color(180, 50, 50));
         
         saveButton.addActionListener(new SaveActionListener());
         deleteButton.addActionListener(new DeleteActionListener());
@@ -98,16 +188,51 @@ public class TranscriptPanel extends JPanel {
         buttonPanel.add(speakButton);
         
         rightPanel.add(titlePanel, BorderLayout.NORTH);
+        rightPanel.add(Box.createVerticalStrut(15));
         rightPanel.add(contentScrollPane, BorderLayout.CENTER);
+        rightPanel.add(Box.createVerticalStrut(15));
         rightPanel.add(buttonPanel, BorderLayout.SOUTH);
         
         // Add panels to main panel
         JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, leftPanel, rightPanel);
-        splitPane.setDividerLocation(300);
+        splitPane.setDividerLocation(340);
+        splitPane.setBackground(MainWindow.getBackgroundColor());
+        splitPane.setBorder(null);
+        splitPane.setDividerSize(10);
+        
         add(splitPane, BorderLayout.CENTER);
         
         // Initially disable edit controls
         setEditingEnabled(false);
+    }
+    
+    private JButton createStyledButton(String text) {
+        JButton button = new JButton(text);
+        button.setBackground(MainWindow.getPanelColor());
+        button.setForeground(MainWindow.getTextColor());
+        button.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createLineBorder(MainWindow.getBorderColor(), 1),
+            new EmptyBorder(8, 15, 8, 15)
+        ));
+        button.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 12));
+        button.setFocusPainted(false);
+        
+        // Add hover effect
+        button.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                button.setBackground(new Color(240, 240, 240));
+            }
+            
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                if (!text.equals("Delete")) {
+                    button.setBackground(MainWindow.getPanelColor());
+                } else {
+                    button.setBackground(new Color(245, 245, 245));
+                }
+            }
+        });
+        
+        return button;
     }
     
     private void loadTranscripts() {
