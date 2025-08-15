@@ -53,9 +53,6 @@ public class AudioCast {
                 publish("Initializing text-to-speech...");
                 ttsManager = new TTSManager();
                 
-                publish("Loading user interface...");
-                mainWindow = new MainWindow(dbManager, ttsManager);
-                
                 publish("Ready!");
                 return null;
             }
@@ -67,11 +64,22 @@ public class AudioCast {
             
             @Override
             protected void done() {
-                frame.dispose();
-                mainWindow.setVisible(true);
-                
-                if (ttsManager.isAvailable()) {
-                    ttsManager.speak("AudioCast is ready for use");
+                try {
+                    get(); // Check for exceptions
+                    
+                    // Create UI on EDT
+                    mainWindow = new MainWindow(dbManager, ttsManager);
+                    frame.dispose();
+                    mainWindow.setVisible(true);
+                    
+                    if (ttsManager.isAvailable()) {
+                        ttsManager.speak("AudioCast is ready for use");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(frame, 
+                        "Error initializing AudioCast: " + e.getMessage(),
+                        "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         };

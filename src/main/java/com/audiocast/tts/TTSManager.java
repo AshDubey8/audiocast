@@ -31,11 +31,14 @@ public class TTSManager {
                 isInitialized = true;
                 System.out.println("FreeTTS initialized successfully");
             } else {
-                System.err.println("Voice not found: " + VOICE_NAME);
+                System.err.println("Voice not found: " + VOICE_NAME + " - using fallback");
             }
         } catch (Exception e) {
             System.err.println("Failed to initialize FreeTTS: " + e.getMessage());
-            e.printStackTrace();
+            System.out.println("Will use system TTS fallback instead.");
+        } catch (NoClassDefFoundError e) {
+            System.err.println("FreeTTS classes not found: " + e.getMessage());
+            System.out.println("Will use system TTS fallback instead.");
         }
     }
     
