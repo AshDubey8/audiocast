@@ -8,6 +8,8 @@ import com.audiocast.tts.TTSManager;
 public class MainWindow extends JFrame {
     private DatabaseManager dbManager;
     private TTSManager ttsManager;
+    private TranscriptPanel transcriptPanel;
+    private PlayerPanel playerPanel;
     
     public MainWindow(DatabaseManager dbManager, TTSManager ttsManager) {
         this.dbManager = dbManager;
@@ -25,9 +27,11 @@ public class MainWindow extends JFrame {
         
         setLayout(new BorderLayout());
         
-        JLabel welcomeLabel = new JLabel("Welcome to AudioCast!", JLabel.CENTER);
-        welcomeLabel.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 18));
-        add(welcomeLabel, BorderLayout.CENTER);
+        transcriptPanel = new TranscriptPanel(dbManager, ttsManager);
+        playerPanel = new PlayerPanel(ttsManager);
+        
+        add(transcriptPanel, BorderLayout.CENTER);
+        add(playerPanel, BorderLayout.SOUTH);
         
         addWindowListener(new java.awt.event.WindowAdapter() {
             @Override
@@ -45,6 +49,7 @@ public class MainWindow extends JFrame {
         JMenuItem newItem = new JMenuItem("New Transcript");
         JMenuItem exitItem = new JMenuItem("Exit");
         
+        newItem.addActionListener(e -> transcriptPanel.createNewTranscript());
         exitItem.addActionListener(e -> System.exit(0));
         
         fileMenu.add(newItem);
