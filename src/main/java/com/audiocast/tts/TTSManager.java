@@ -7,10 +7,12 @@ public class TTSManager {
     private static final String VOICE_NAME = "kevin16";
     private Voice voice;
     private boolean isInitialized = false;
+    private TTSFallback fallback;
     private volatile boolean isSpeaking = false;
     
     public TTSManager() {
         initializeTTS();
+        fallback = new TTSFallback();
     }
     
     private void initializeTTS() {
@@ -47,13 +49,31 @@ public class TTSManager {
             try {
                 if (isInitialized && voice != null) {
                     voice.speak(text);
+                } else {
+                    fallback.speak(text);
                 }
             } catch (Exception e) {
                 System.err.println("Error during speech synthesis: " + e.getMessage());
+                fallback.speak(text);
             } finally {
                 isSpeaking = false;
             }
         }).start();
+    }
+    
+    public void stopSpeaking() {
+        if (voice != null && isSpeaking) {
+            // FreeTTS doesn't have a direct stop method, but we can deallocate and reallocate
+            new Thread(() -> {
+                try {
+                    voice.deallocate();
+                    Thread.sleep(100);
+                    voice.allocate();
+                } catch (Exception e) {
+                    System.err.println("Error stopping speech: " + e.getMessage());
+                }
+            }).start();
+        }
     }
     
     public boolean isAvailable() {
