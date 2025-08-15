@@ -147,24 +147,24 @@ public class TranscriptPanel extends JPanel {
         contentArea.setWrapStyleWord(true);
         contentArea.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 13));
         contentArea.setBorder(new EmptyBorder(10, 10, 10, 10));
-        contentArea.setBackground(MainWindow.getPanelColor());
-        contentArea.setForeground(MainWindow.getTextColor());
-        contentArea.setCaretColor(MainWindow.getAccentColor());
+        contentArea.setBackground(Color.WHITE);
+        contentArea.setForeground(Color.BLACK);
+        contentArea.setCaretColor(Color.BLUE);
         contentArea.setEnabled(true); // Force enable
         contentArea.setEditable(true); // Force editable
         
         JScrollPane contentScrollPane = new JScrollPane(contentArea);
         contentScrollPane.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createTitledBorder(
-                BorderFactory.createLineBorder(MainWindow.getBorderColor(), 1),
+                BorderFactory.createLineBorder(Color.GRAY, 1),
                 "Content",
                 0, 0,
                 new Font(Font.SANS_SERIF, Font.BOLD, 12),
-                MainWindow.getTextColor()
+                Color.BLACK
             ),
             new EmptyBorder(5, 5, 5, 5)
         ));
-        contentScrollPane.getViewport().setBackground(MainWindow.getPanelColor());
+        contentScrollPane.getViewport().setBackground(Color.WHITE);
         
         // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -174,6 +174,7 @@ public class TranscriptPanel extends JPanel {
         saveButton = createStyledButton("Save");
         deleteButton = createStyledButton("Delete");
         speakButton = createStyledButton("Speak");
+        JButton viewButton = createStyledButton("View Text");
         
         // Style delete button differently
         deleteButton.setBackground(new Color(245, 245, 245));
@@ -183,11 +184,19 @@ public class TranscriptPanel extends JPanel {
         deleteButton.addActionListener(new DeleteActionListener());
         speakButton.addActionListener(new SpeakActionListener());
         newButton.addActionListener(e -> createNewTranscript());
+        viewButton.addActionListener(e -> {
+            if (currentTranscript != null) {
+                showTextInPopup(currentTranscript.getTitle(), currentTranscript.getContent());
+            } else {
+                showTextInPopup("No Selection", "Please select a transcript first.");
+            }
+        });
         
         buttonPanel.add(newButton);
         buttonPanel.add(saveButton);
         buttonPanel.add(deleteButton);
         buttonPanel.add(speakButton);
+        buttonPanel.add(viewButton);
         
         rightPanel.add(titlePanel, BorderLayout.NORTH);
         rightPanel.add(Box.createVerticalStrut(15));
@@ -308,6 +317,50 @@ public class TranscriptPanel extends JPanel {
         System.out.println("Set editing enabled: " + enabled + ", content area enabled: " + contentArea.isEnabled());
     }
     
+    private void showTextInPopup(String title, String content) {
+        JFrame popup = new JFrame("Transcript Content - " + title);
+        popup.setSize(600, 400);
+        popup.setLocationRelativeTo(this);
+        
+        JTextArea popupText = new JTextArea(content);
+        popupText.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
+        popupText.setBackground(Color.WHITE);
+        popupText.setForeground(Color.BLACK);
+        popupText.setEditable(true);
+        popupText.setLineWrap(true);
+        popupText.setWrapStyleWord(true);
+        
+        JScrollPane scrollPane = new JScrollPane(popupText);
+        scrollPane.setBackground(Color.WHITE);
+        
+        JButton copyToMain = new JButton("Copy to Main Editor");
+        copyToMain.addActionListener(e -> {
+            contentArea.setText(popupText.getText());
+            if (currentTranscript != null) {
+                currentTranscript.setContent(popupText.getText());
+            }
+            popup.dispose();
+        });
+        
+        JButton speakButton = new JButton("Speak This Text");
+        speakButton.addActionListener(e -> {
+            String textToSpeak = popupText.getText();
+            if (!textToSpeak.trim().isEmpty()) {
+                ttsManager.speak(textToSpeak);
+            }
+        });
+        
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(copyToMain);
+        buttonPanel.add(speakButton);
+        
+        popup.setLayout(new BorderLayout());
+        popup.add(scrollPane, BorderLayout.CENTER);
+        popup.add(buttonPanel, BorderLayout.SOUTH);
+        
+        popup.setVisible(true);
+    }
+    
     private class TranscriptSelectionListener implements ListSelectionListener {
         @Override
         public void valueChanged(ListSelectionEvent e) {
@@ -318,11 +371,19 @@ public class TranscriptPanel extends JPanel {
                     System.out.println("Selected transcript: " + selected.getTitle());
                     System.out.println("Content: " + selected.getContent());
                     titleField.setText(selected.getTitle());
+                    System.out.println("Setting content area text to: " + selected.getContent());
                     contentArea.setText(selected.getContent());
+                    contentArea.revalidate();
+                    contentArea.repaint();
+                    System.out.println("Content area text after setting: " + contentArea.getText());
                     contentArea.setEnabled(true);
                     contentArea.setEditable(true);
                     setEditingEnabled(true);
                     System.out.println("Content area enabled: " + contentArea.isEnabled());
+                    System.out.println("Content area editable: " + contentArea.isEditable());
+                    
+                    // FORCE SHOW TEXT IN POPUP WINDOW
+                    showTextInPopup(selected.getTitle(), selected.getContent());
                 }
             }
         }

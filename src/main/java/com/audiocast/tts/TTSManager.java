@@ -65,7 +65,8 @@ public class TTSManager {
     }
     
     public void stopSpeaking() {
-        if (voice != null && isSpeaking) {
+        isSpeaking = false;
+        if (voice != null && isInitialized) {
             // FreeTTS doesn't have a direct stop method, but we can deallocate and reallocate
             new Thread(() -> {
                 try {
@@ -77,6 +78,10 @@ public class TTSManager {
                 }
             }).start();
         }
+        // Also stop the fallback TTS
+        if (fallback != null) {
+            fallback.stop();
+        }
     }
     
     public boolean isAvailable() {
@@ -84,7 +89,7 @@ public class TTSManager {
     }
     
     public boolean isSpeaking() {
-        return isSpeaking;
+        return isSpeaking || (fallback != null && fallback.isSpeaking());
     }
     
     public void shutdown() {
