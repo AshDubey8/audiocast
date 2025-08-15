@@ -1,5 +1,5 @@
--- H2 Database Schema for AudioCast
--- Supports full-text search on transcript content
+-- AudioCast Database Schema
+-- H2 Database with full-text search support
 
 CREATE TABLE IF NOT EXISTS transcripts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
@@ -9,9 +9,15 @@ CREATE TABLE IF NOT EXISTS transcripts (
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
--- Create full-text index for fast searching
+-- Create full-text search index for content
 CREATE ALIAS IF NOT EXISTS FT_INIT FOR "org.h2.fulltext.FullText.init";
 CALL FT_INIT();
 
--- Enable full-text search on transcript content
+-- Initialize full-text search on transcripts table
 CALL FT_CREATE_INDEX('PUBLIC', 'TRANSCRIPTS', 'CONTENT');
+
+-- Sample data for testing
+INSERT INTO transcripts (title, content) VALUES 
+('Welcome Message', 'Welcome to AudioCast, your personal transcript management system with text-to-speech capabilities.'),
+('Test Transcript', 'This is a test transcript to verify the text-to-speech functionality is working correctly.'),
+('Lorem Ipsum', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore.');
