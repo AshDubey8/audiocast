@@ -1,6 +1,3 @@
--- AudioCast Database Schema
--- H2 Database with full-text search support
-
 CREATE TABLE IF NOT EXISTS transcripts (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
@@ -18,9 +15,8 @@ CALL FT_CREATE_INDEX('PUBLIC', 'TRANSCRIPTS', 'CONTENT');
 
 -- Sample data for testing
 INSERT INTO transcripts (title, content) VALUES 
-('Welcome!', 'Hey there! Welcome to AudioCast - where your text actually talks back to you. Pretty neat, right?'),
-('Quick Coffee Break', 'Just had the most amazing coffee. The barista drew a tiny cat in the foam. Now I can conquer the world... or at least finish this project.'),
-('TTS Test Drive', 'Testing one, two, three. Does this thing work? Click Speak and find out! Pro tip: it should sound way better than my actual voice.'),
-('Meeting Notes', 'Team meeting today. Sarah brought donuts. Tom forgot his laptop again. We discussed the new project timeline. The donuts were definitely the highlight.'),
-('Random Thoughts', 'Why do we park in driveways and drive on parkways? Also, pineapple on pizza is totally acceptable. Fight me.');
-('Lorem Ipsum', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.');
+('Ocean Fact', 'The Pacific Ocean is larger than all land masses on Earth combined. It covers about one third of the planet surface.'),
+('Space Fact', 'A day on Venus is longer than its year. Venus rotates so slowly that one day takes 243 Earth days, but it orbits the sun in only 225 Earth days.'),
+('Animal Fact', 'Octopuses have three hearts and blue blood. Two hearts pump blood to the gills while the third pumps blood to the rest of the body.'),
+('Food Fact', 'Honey never spoils. Archaeologists have found edible honey in ancient Egyptian tombs that is over 3000 years old.'),
+('Human Fact', 'Your brain uses about 20 percent of your total energy even though it only weighs about 3 pounds. It consumes glucose constantly to function.');

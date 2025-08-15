@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS transcripts (
 );
 
 INSERT INTO transcripts (title, content) VALUES 
-('Welcome!', 'Hey there! Welcome to AudioCast - where your text actually talks back to you. Pretty neat, right?'),
-('Quick Coffee Break', 'Just had the most amazing coffee. The barista drew a tiny cat in the foam. Now I can conquer the world... or at least finish this project.'),
-('TTS Test Drive', 'Testing one, two, three. Does this thing work? Click Speak and find out! Pro tip: it should sound way better than my actual voice.'),
-('Meeting Notes', 'Team meeting today. Sarah brought donuts. Tom forgot his laptop again. We discussed the new project timeline. The donuts were definitely the highlight.'),
-('Random Thoughts', 'Why do we park in driveways and drive on parkways? Also, pineapple on pizza is totally acceptable. Fight me.');
+('Quadratic Formula', 'The quadratic formula is x equals negative b plus or minus the square root of b squared minus 4ac, all divided by 2a. This formula solves any quadratic equation of the form ax squared plus bx plus c equals zero.'),
+('Newton Laws', 'Newton first law states that an object at rest stays at rest and an object in motion stays in motion unless acted upon by an external force. This is also known as the law of inertia.'),
+('Hindi Basics', 'Hindi mein namaste ka matlab hai hello. Main ek vidyarthi hun means I am a student. Aap kaise hain means how are you. Hindi bharat ki rajbhasha hai.'),
+('Calculus Derivatives', 'The derivative of x squared is 2x. The derivative of sine x is cosine x. The power rule states that the derivative of x to the n is n times x to the n minus one.'),
+('Einstein Relativity', 'Einstein famous equation E equals mc squared shows that mass and energy are interchangeable. Time dilation occurs when objects move at speeds approaching the speed of light.');
