@@ -3,10 +3,12 @@ package com.audiocast;
 import javax.swing.*;
 import com.audiocast.database.DatabaseManager;
 import com.audiocast.tts.TTSManager;
+import com.audiocast.ui.MainWindow;
 
 public class AudioCast {
     private DatabaseManager dbManager;
     private TTSManager ttsManager;
+    private MainWindow mainWindow;
     
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -51,6 +53,9 @@ public class AudioCast {
                 publish("Initializing text-to-speech...");
                 ttsManager = new TTSManager();
                 
+                publish("Loading user interface...");
+                mainWindow = new MainWindow(dbManager, ttsManager);
+                
                 publish("Ready!");
                 return null;
             }
@@ -62,7 +67,8 @@ public class AudioCast {
             
             @Override
             protected void done() {
-                statusLabel.setText("AudioCast initialized successfully!");
+                frame.dispose();
+                mainWindow.setVisible(true);
                 
                 if (ttsManager.isAvailable()) {
                     ttsManager.speak("AudioCast is ready for use");
